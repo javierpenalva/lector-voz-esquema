@@ -1,0 +1,5 @@
+flask>=3.1
+pypdf>=7.0
+edge-tts>=7.3
+anthropic>=2.8
+waitress>=3.0

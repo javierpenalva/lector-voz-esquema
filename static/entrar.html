@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar · Lector con voz y esquema</title>
+  <link rel="icon" href="/static/icono.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/estilos.css">
+</head>
+<body>
+  <main class="entrar">
+    <h1><span aria-hidden="true">🎧</span> Lector con voz y esquema</h1>
+    <form method="post" action="/entrar">
+      <label for="codigo">Escribe el código de acceso</label>
+      <input type="text" id="codigo" name="codigo" required autofocus
+             autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="fallo">
+      <p id="fallo" class="error" role="alert" hidden>Ese código no es correcto. Inténtalo otra vez.</p>
+      <button type="submit" class="boton grande">Entrar</button>
+    </form>
+  </main>
+  <script>
+    if (new URLSearchParams(location.search).has("error")) document.getElementById("fallo").hidden = false;
+  </script>
+</body>
+</html>

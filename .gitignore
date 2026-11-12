@@ -1,0 +1,6 @@
+.venv/
+cache_audio/
+clave_anthropic.txt
+__pycache__/
+.DS_Store
+.claude/

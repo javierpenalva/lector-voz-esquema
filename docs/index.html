@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lector con voz y esquema</title>
+  <meta name="description" content="Abre un PDF o un Word, escúchalo en voz alta y mira su esquema.">
+  <meta name="theme-color" content="#0b4fa8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Lector">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icono.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icono.png">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <a class="saltar" href="#principal">Saltar al contenido</a>
+
+  <header class="cabecera">
+    <h1><span aria-hidden="true">🎧</span> Lector con voz y esquema</h1>
+    <button type="button" id="abrir-ajustes" class="boton secundario" aria-haspopup="dialog">
+      <span aria-hidden="true">⚙️</span> Ajustes
+    </button>
+  </header>
+
+  <main id="principal" tabindex="-1">
+
+    <!-- Paso 1: elegir documento -->
+    <section id="zona-carga" aria-labelledby="t-carga">
+      <h2 id="t-carga">Elige un documento</h2>
+      <div id="soltar" class="soltar">
+        <p class="soltar-icono" aria-hidden="true">📄</p>
+        <label for="archivo" class="boton grande">Elegir archivo</label>
+        <input type="file" id="archivo" class="oculto-visual"
+               accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
+        <p>Sirven archivos PDF, Word (.docx) y de texto.<br>
+           También puedes elegir uno que tengas en Google Drive.</p>
+      </div>
+      <p class="ayuda">El documento se lee en este dispositivo. No se envía a ningún sitio.</p>
+    </section>
+
+    <p id="estado" class="estado" role="status" aria-live="polite"></p>
+    <p id="error" class="error" role="alert" hidden></p>
+
+    <!-- Paso 2: documento abierto -->
+    <div id="lector" hidden>
+      <div class="titulo-doc">
+        <h2 id="titulo-doc" tabindex="-1"></h2>
+        <button type="button" id="otro" class="boton secundario">Abrir otro documento</button>
+      </div>
+
+      <section class="reproductor" aria-label="Reproductor de voz">
+        <div class="controles">
+          <button type="button" id="anterior" class="redondo" aria-label="Fragmento anterior">⏮</button>
+          <button type="button" id="play" class="redondo principal" aria-label="Escuchar el documento">
+            <span id="play-icono" aria-hidden="true">▶</span>
+          </button>
+          <button type="button" id="siguiente" class="redondo" aria-label="Fragmento siguiente">⏭</button>
+        </div>
+        <div class="info">
+          <p id="que-suena" class="que-suena">Pulsa el botón para escuchar</p>
+          <progress id="progreso" value="0" max="1" aria-label="Avance de la lectura"></progress>
+        </div>
+      </section>
+
+      <div class="extras">
+        <label for="velocidad">Velocidad</label>
+        <select id="velocidad">
+          <option value="0.7">Muy lenta</option>
+          <option value="0.85">Lenta</option>
+          <option value="1" selected>Normal</option>
+          <option value="1.2">Rápida</option>
+          <option value="1.5">Muy rápida</option>
+        </select>
+      </div>
+
+      <nav class="pestanas" aria-label="Partes del documento">
+        <a href="#sec-esquema" class="boton secundario"><span aria-hidden="true">🗺️</span> Ir al esquema</a>
+        <a href="#sec-texto" class="boton secundario"><span aria-hidden="true">📖</span> Ir al texto</a>
+      </nav>
+
+      <section id="sec-esquema" aria-labelledby="t-esquema">
+        <div class="titulo-seccion">
+          <h2 id="t-esquema">Esquema</h2>
+          <div class="acciones">
+            <button type="button" id="oir-esquema" class="boton">
+              <span aria-hidden="true">🔊</span> Escuchar el esquema
+            </button>
+            <button type="button" id="imprimir" class="boton secundario">
+              <span aria-hidden="true">🖨️</span> Imprimir
+            </button>
+          </div>
+        </div>
+        <p class="ayuda">Reúne las frases más importantes de cada parte del documento.</p>
+        <div id="esquema" class="esquema"></div>
+      </section>
+
+      <section id="sec-texto" aria-labelledby="t-texto">
+        <div class="titulo-seccion">
+          <h2 id="t-texto">Texto completo</h2>
+          <button type="button" id="oir-texto" class="boton">
+            <span aria-hidden="true">🔊</span> Escuchar desde el principio
+          </button>
+        </div>
+        <p class="ayuda">Pulsa sobre cualquier párrafo para escuchar desde ahí.</p>
+        <div id="texto" class="texto"></div>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="ajustes" aria-labelledby="t-ajustes">
+    <form method="dialog">
+      <h2 id="t-ajustes">Ajustes</h2>
+
+      <label for="voz">Voz</label>
+      <div class="fila-voz">
+        <select id="voz"></select>
+        <button type="button" id="probar-voz" class="boton secundario">Probar</button>
+      </div>
+      <p class="ayuda">Las voces son las de este dispositivo. Si suenan poco naturales, se pueden
+        descargar otras mejores en los ajustes del dispositivo (Accesibilidad → Contenido leído → Voces
+        en iPad y iPhone; Ajustes → Síntesis de voz en Android).</p>
+
+      <label for="tamano">Tamaño de la letra</label>
+      <input type="range" id="tamano" min="16" max="34" step="2" value="20">
+
+      <fieldset>
+        <legend>Colores</legend>
+        <label><input type="radio" name="tema" value="claro" checked> Claro</label>
+        <label><input type="radio" name="tema" value="crema"> Crema</label>
+        <label><input type="radio" name="tema" value="oscuro"> Oscuro</label>
+      </fieldset>
+
+      <label class="casilla"><input type="checkbox" id="espaciado"> Más espacio entre letras y líneas</label>
+
+      <h3>Teclado</h3>
+      <ul class="atajos">
+        <li><kbd>Espacio</kbd> escuchar o pausar</li>
+        <li><kbd>←</kbd> <kbd>→</kbd> fragmento anterior o siguiente</li>
+      </ul>
+
+      <button type="submit" class="boton grande">Cerrar</button>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

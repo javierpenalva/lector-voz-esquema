@@ -1,0 +1,13 @@
+{
+  "name": "Lector con voz y esquema",
+  "short_name": "Lector",
+  "lang": "es",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b4fa8",
+  "icons": [
+    { "src": "/static/icono.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/static/icono.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
